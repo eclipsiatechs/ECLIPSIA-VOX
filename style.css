@@ -219,25 +219,50 @@ body {
     border-radius: 12px;
 }
 
+/* Mobile-friendly voice selector */
 .glass-input-dark {
     background: rgba(30, 41, 59, 0.7);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(30, 64, 175, 0.4);
     color: #e2e8f0;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 16px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
 
-.glass-input-dark::placeholder {
-    color: #94a3b8;
+/* Mobile dropdown styling */
+select.glass-input-dark {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2360a5fa' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 16px 12px;
+    padding-right: 2.5rem;
+    cursor: pointer;
 }
 
-.glass-input-dark:focus {
+/* Dropdown options styling for mobile */
+select.glass-input-dark option {
+    background: rgba(15, 23, 42, 0.95);
+    color: #e2e8f0;
+    padding: 12px;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(30, 64, 175, 0.3);
+}
+
+/* Ensure dropdown is scrollable on mobile */
+select.glass-input-dark:focus {
     outline: none;
     border-color: #1e40af;
     box-shadow: 
         0 0 0 3px rgba(30, 64, 175, 0.2),
         0 0 15px rgba(30, 64, 175, 0.3);
     background: rgba(30, 41, 59, 0.9);
+}
+
+.glass-input-dark::placeholder {
+    color: #94a3b8;
 }
 
 /* Premium Button Styles - Dark Theme */
@@ -252,6 +277,9 @@ body {
     overflow: hidden;
     border: none;
     color: #e2e8f0;
+    font-size: 16px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .btn-premium-dark::before {
@@ -445,6 +473,8 @@ body {
 .audio-dark {
     filter: invert(0.9) hue-rotate(180deg) brightness(0.8) contrast(1.2);
     border-radius: 8px;
+    width: 100%;
+    height: 40px;
 }
 
 /* Container Enhancement */
@@ -502,22 +532,96 @@ body {
     color: #93c5fd;
 }
 
-/* Scrollbar Styling */
-::-webkit-scrollbar {
+/* Mobile-specific improvements */
+@media (max-width: 768px) {
+    .glass-effect-dark {
+        backdrop-filter: blur(12px);
+        margin: 8px;
+        padding: 16px;
+    }
+    
+    .btn-premium-dark {
+        padding: 16px 24px;
+        font-size: 18px;
+        min-height: 54px;
+    }
+    
+    .text-glow-white-dark {
+        text-shadow: 
+            0 0 6px rgba(241, 245, 249, 0.5),
+            0 0 12px rgba(241, 245, 249, 0.3);
+    }
+
+    /* Mobile voice selector improvements */
+    select.glass-input-dark {
+        font-size: 16px;
+        padding: 12px 16px;
+        height: auto;
+        min-height: 48px;
+        line-height: 1.5;
+    }
+
+    /* Ensure dropdown is usable on mobile */
+    select.glass-input-dark option {
+        font-size: 16px;
+        padding: 12px 8px;
+        background: rgba(15, 23, 42, 0.98);
+    }
+
+    /* Mobile textarea improvements */
+    textarea.glass-input-dark {
+        font-size: 16px;
+        min-height: 120px;
+        padding: 12px;
+    }
+
+    /* Mobile layout improvements for flex containers */
+    .flex-col-sm {
+        flex-direction: column;
+    }
+    
+    .w-full-sm {
+        width: 100%;
+        margin-bottom: 12px;
+    }
+}
+
+/* Additional mobile optimizations */
+@media (max-width: 480px) {
+    body {
+        padding: 8px;
+    }
+    
+    .app-card {
+        margin: 4px;
+        padding: 12px;
+    }
+    
+    /* Voice selector mobile touch */
+    #voice-selector {
+        touch-action: manipulation;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+}
+
+/* Scrollbar styling for dropdown */
+select.glass-input-dark::-webkit-scrollbar {
     width: 8px;
 }
 
-::-webkit-scrollbar-track {
+select.glass-input-dark::-webkit-scrollbar-track {
     background: rgba(15, 23, 42, 0.8);
     border-radius: 4px;
 }
 
-::-webkit-scrollbar-thumb {
+select.glass-input-dark::-webkit-scrollbar-thumb {
     background: rgba(59, 130, 246, 0.5);
     border-radius: 4px;
 }
 
-::-webkit-scrollbar-thumb:hover {
+select.glass-input-dark::-webkit-scrollbar-thumb:hover {
     background: rgba(96, 165, 250, 0.7);
 }
 
@@ -533,40 +637,8 @@ button:focus, select:focus, textarea:focus {
     outline-offset: 2px;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .glass-effect-dark {
-        backdrop-filter: blur(12px);
-    }
-    
-    .btn-premium-dark {
-        padding: 12px 24px;
-    }
-    
-    .text-glow-white-dark {
-        text-shadow: 
-            0 0 6px rgba(241, 245, 249, 0.5),
-            0 0 12px rgba(241, 245, 249, 0.3);
-    }
-}
-
-/* Add to style.css */
-.status-anime {
-    background: rgba(168, 85, 247, 0.8);
-    border: 1px solid rgba(192, 132, 252, 0.3);
-    color: #e9d5ff;
-}
-
-/* Anime voice selector styling */
-select optgroup[label*="Anime"] {
-    font-weight: bold;
-    color: #c084fc;
-}
-
-select option {
-    font-style: normal;
-}
-
-select option[style*="italic"] {
-    font-style: italic;
+/* Prevent horizontal overflow on mobile */
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
 }
