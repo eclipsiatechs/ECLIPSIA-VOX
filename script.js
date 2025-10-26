@@ -10,28 +10,28 @@ const PLACEHOLDER_KEY = "AIzaSyDSzlDGFWjfzgIGBxwgAMdIRWbgoLdgg7M";
 const apiKey = "AIzaSyCk3kELMbxNQupAtGmvX5dePa3gVxXgB2Q";
 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
 
-// --- Standard Google TTS Voices ---
+// --- ACTUAL Google TTS Voices (Only voices that exist in the API) ---
 const VOICES = [
-    { name: "Kore", label: "Kore (Firm, Default)" },
-    { name: "Fenrir", label: "Fenrir (Excitable)" },
-    { name: "Zephyr", label: "Zephyr (Bright)" },
-    { name: "Puck", label: "Puck (Upbeat)" },
-    { name: "Charon", label: "Charon (Informative)" },
-    { name: "Leda", label: "Leda (Youthful)" },
-    { name: "Alnilam", label: "Alnilam (Firm, Alt)" },
-    { name: "Sulafat", label: "Sulafat (Warm)" },
-    { name: "Jupiter", label: "Jupiter (Deep, Authoritative)" },
-    { name: "Nova", label: "Nova (Energetic, Clear)" },
-    { name: "Orion", label: "Orion (Calm, Soothing)" },
-    { name: "Lyra", label: "Lyra (Elegant, Professional)" },
-    { name: "Phoenix", label: "Phoenix (Passionate, Dynamic)" }
+    { name: "Kore", label: "Kore (Standard - Firm)" },
+    { name: "Fenrir", label: "Fenrir (Standard - Energetic)" },
+    { name: "Zephyr", label: "Zephyr (Standard - Bright)" },
+    { name: "Puck", label: "Puck (Standard - Upbeat)" },
+    { name: "Charon", label: "Charon (Standard - Calm)" },
+    { name: "Leda", label: "Leda (Standard - Youthful)" },
+    { name: "Alnilam", label: "Alnilam (Standard - Serious)" },
+    { name: "Sulafat", label: "Sulafat (Standard - Warm)" },
+    { name: "Achernar", label: "Achernar (Clear - Professional)" },
+    { name: "Algieba", label: "Algieba (Warm - Expressive)" },
+    { name: "Schedar", label: "Schedar (Deep - Authoritative)" },
+    { name: "Gacrux", label: "Gacrux (Smooth - Calming)" },
+    { name: "Vindemiatrix", label: "Vindemiatrix (Elegant - Sophisticated)" }
 ];
 
 // Global state management
 let currentAudioBlob = null;
 let audioChunks = [];
 const MAX_RETRIES = 3;
-const CHUNK_SIZE = 2000;
+const CHUNK_SIZE = 1800;
 
 // DOM Elements Cache
 const elements = {
@@ -113,7 +113,7 @@ window.unlockApp = function() {
 // ----------------------------------------------------------------------------------
 
 /**
- * Populates voice selector with premium options
+ * Populates voice selector with actual available options
  */
 function populateVoiceSelector() {
     VOICES.forEach((voice, index) => {
@@ -274,7 +274,7 @@ async function generateAudioChunk(text, voiceName, retryCount = 0) {
     };
 
     try {
-        console.log(`Generating audio chunk (attempt ${retryCount + 1})...`);
+        console.log(`Generating audio chunk with voice: ${voiceName}`);
         
         const response = await fetch(apiUrl, {
             method: 'POST',
@@ -286,20 +286,25 @@ async function generateAudioChunk(text, voiceName, retryCount = 0) {
         });
         
         if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`API Error ${response.status}:`, errorText);
+            
             if (response.status === 429) {
                 throw new Error(`API rate limit exceeded (429)`);
+            } else if (response.status === 400) {
+                throw new Error(`Voice ${voiceName} is not supported by the API`);
             }
-            throw new Error(`API returned status ${response.status}: ${await response.text()}`);
+            throw new Error(`API returned status ${response.status}`);
         }
 
         const result = await response.json();
-        console.log('API Response:', result);
+        console.log('API Response received successfully');
         
         const part = result?.candidates?.[0]?.content?.parts?.[0];
         const audioData = part?.inlineData?.data;
         
         if (!audioData) {
-            throw new Error("No audio data in response. Check API response format.");
+            throw new Error("No audio data in response");
         }
 
         return audioData;
@@ -588,6 +593,8 @@ async function generateAndPlayAudio(text, voiceName, voiceLabel) {
         
         if (error.message.includes('429')) {
             showStatus("Rate limit reached. Please wait 60 seconds before retrying.", 'error');
+        } else if (error.message.includes('not supported')) {
+            showStatus(`Voice error: ${error.message}. Please select a different voice.`, 'error');
         } else if (error.message.includes('No audio data')) {
             showStatus("API returned no audio data. Please check your text and try again.", 'error');
         } else {
@@ -689,5 +696,5 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     document.head.appendChild(style);
     
-    console.log('ECLIPSIA-VOX Premium Audio initialized successfully');
+    console.log('ECLIPSIA-VOX Premium Audio with Valid Voices initialized successfully');
 });
