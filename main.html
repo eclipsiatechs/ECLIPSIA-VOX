@@ -1,0 +1,162 @@
+<!-- main.html - MAIN APPLICATION PAGE -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECLIPSIA-VOX: Elite AI Voice Synthesis Platform</title>
+    <!-- Load Tailwind CSS for modern, responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Navigation Button Styles */
+        .nav-button {
+            background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.4);
+            background: linear-gradient(135deg, #1e40af 0%, #4f46e5 100%);
+        }
+
+        .nav-button:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="p-4 flex items-center justify-center container">
+    <!-- Animated Background Elements -->
+    <div class="bg-animation">
+        <div class="stars"></div>
+        <div class="stars2"></div>
+        <div class="stars3"></div>
+        <div class="nebula"></div>
+        <div class="pulsar"></div>
+        <div class="dark-overlay"></div>
+    </div>
+
+    <div class="w-full max-w-2xl relative z-10">
+        
+        <!-- MAIN APPLICATION CARD -->
+        <div id="app-card-main" class="app-card p-6 md:p-8 rounded-2xl shadow-2xl glass-effect-dark">
+            
+            <!-- Navigation Button -->
+            <div class="text-center mb-6">
+                <a href="translate.html" class="nav-button">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+                    </svg>
+                    Go to translator
+                </a>
+            </div>
+
+            <!-- Logo in Main Header -->
+            <header class="text-center mb-8">
+                <div class="flex justify-center items-center mb-4">
+                    <img src="logo/Gemini_Generated_Image_scrvv5scrvv5scrv.png" alt="ECLIPSIA Logo" class="h-16 w-auto logo-pulse-dark">
+                </div>
+                <h1 class="text-5xl font-black text-glow-white-dark tracking-wider animate-text-glitch-dark">ECLIPSIA-VOX</h1>
+                <p class="text-sm text-glow-cyan-dark font-medium mt-2 animate-pulse">Elite AI Voice Synthesis & Accessibility</p>
+            </header>
+            
+            <!-- Voice Selection and Info Row -->
+            <div class="flex flex-col sm:flex-row gap-4 mb-4 items-center">
+                <div class="w-full sm:w-1/2">
+                    <label for="voice-selector" class="block text-sm font-medium text-glow-white-dark mb-1">Select Voice Personality</label>
+                    <select id="voice-selector" class="w-full p-3 rounded-lg text-sm appearance-none glass-input-dark">
+                        <!-- Options populated by JavaScript -->
+                    </select>
+                </div>
+                
+                <div class="w-full sm:w-1/2">
+                    <p class="text-xs font-semibold text-gray-500">Current Selection:</p>
+                    <p id="selected-voice-info" class="text-sm text-glow-cyan-dark font-bold mt-1 animate-fade-loop">Kore (Firm)</p>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <textarea id="text-input" 
+                      rows="8" 
+                      placeholder="Paste your document or long message here (Note: API limit is approx 4096 characters)..."
+                      class="w-full p-4 rounded-xl text-base glass-input-dark animate-fade-in-delay"></textarea>
+
+            <div class="flex justify-between items-center mt-3 mb-6">
+                <span id="char-count" class="text-xs text-gray-500">0 Characters</span>
+            </div>
+
+            <!-- Action Button -->
+            <button id="read-button" 
+                    class="btn-premium-dark w-full text-white font-extrabold text-lg py-4 rounded-xl flex items-center justify-center disabled:opacity-50 glow-effect-dark"
+                    onclick="handleGenerate()">
+                <span id="button-text">Synthesize & Read Aloud</span>
+                <div id="loading-indicator" class="loading-spinner-dark h-6 w-6 border-4 ml-3 hidden"></div>
+            </button>
+
+            <!-- Status Message Area -->
+            <div id="status-message" class="mt-4 text-center p-3 rounded-xl text-sm hidden glass-effect-dark"></div>
+
+            <!-- Audio Controls for Manual Playback & Download -->
+            <div id="audio-player-controls" class="mt-6 p-4 rounded-xl shadow-inner border border-blue-800 glass-effect-dark">
+                <p class="text-sm font-semibold text-glow-cyan-dark mb-2">Ready for Playback</p>
+                <audio id="audio-player" controls class="w-full audio-dark"></audio>
+                
+                <!-- DOWNLOAD BUTTON -->
+                <div class="flex justify-center mt-3">
+                    <button id="download-button" onclick="downloadAudio()" disabled 
+                            class="btn-premium-dark text-white font-bold py-3 px-8 rounded-xl text-sm transition duration-300 disabled:opacity-30 flex items-center space-x-2 shadow-md glow-effect-dark">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        <span>Download Audio</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- ECLIPSIA LOGO/SAY LINE -->
+            <div class="text-center mt-4 text-sm font-semibold text-glow-white-dark animate-fade-loop">BY ECLIPSIA-TECHS</div>
+        </div>
+
+        <!-- OPERATIONAL GUIDELINES SECTION -->
+        <div class="app-card p-6 md:p-8 rounded-2xl shadow-2xl mt-8 glass-effect-dark">
+            <h3 class="text-2xl font-black text-glow-white-dark tracking-wider mb-4 border-b border-blue-800 pb-2">Operational Guidelines: ECLIPSIA-VOX Platform</h3>
+            
+            <ul class="instructions-list-dark text-sm">
+                <li><strong class="text-glow-cyan-dark">Platform Access:</strong> If the primary interface is concealed, please initiate access by clicking "Join ECLIPSIA-TECHS Channel" (links to our private Telegram) and subsequently selecting "Get Access" to validate entry.</li>
+                <li><strong class="text-glow-cyan-dark">Content Synthesis:</strong> Input your source text into the field. Select a designated Voice Personality from the menu, and execute the process by clicking the "Synthesize & Read Aloud" command.</li>
+                <li><strong class="text-glow-cyan-dark">Media Retrieval:</strong> Upon successful synthesis, the audio playback controls will become available. The audio file can be reviewed directly or downloaded as a WAV file for offline integration.</li>
+            </ul>
+
+            <h3 class="text-lg font-bold text-red-500 tracking-wider mt-6 mb-3">Service Interruption Protocol (429 Error)</h3>
+            <ul class="instructions-list-dark text-sm">
+                <li><strong class="text-red-400">Rate Limiting Notification:</strong> A "Limit reached, try again later" error indicates that the assigned API quota has been temporarily exceeded (HTTP 429 status).</li>
+                <li><strong class="text-red-400">Mandatory Action:</strong> A minimum delay of **60 seconds** is strictly required before reattempting synthesis. Repeated, rapid requests will maintain the service block.</li>
+            </ul>
+        </div>
+        
+        <!-- Branding Link -->
+        <div class="text-center mt-2 text-xs text-gray-500 animate-fade-loop">
+            Powered by 
+            <a href="https://t.me/eclipsia_techs" 
+               target="_blank" 
+               class="text-glow-cyan-dark hover:text-blue-400 font-bold transition duration-300">
+               ECLIPSIA-TECHS
+            </a>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!-- index.html - GATEWAY PAGE -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECLIPSIA-VOX: Elite AI Voice Synthesis Platform</title>
+    <!-- Load Tailwind CSS for modern, responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Navigation Button Styles */
+        .nav-button {
+            background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.4);
+            background: linear-gradient(135deg, #1e40af 0%, #4f46e5 100%);
+        }
+
+        .nav-button:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="p-4 flex items-center justify-center container">
+    <!-- Animated Background Elements -->
+    <div class="bg-animation">
+        <div class="stars"></div>
+        <div class="stars2"></div>
+        <div class="stars3"></div>
+        <div class="nebula"></div>
+        <div class="pulsar"></div>
+        <div class="dark-overlay"></div>
+    </div>
+
+    <div class="w-full max-w-2xl relative z-10">
+        
+        <!-- TELEGRAM GATEKEEPER SCREEN (Initially Visible) -->
+        <div id="app-gatekeeper" class="app-card p-10 md:p-16 rounded-2xl shadow-2xl text-center flex flex-col items-center glass-effect-dark">
+            <!-- Logo in Gatekeeper -->
+            <div class="gatekeeper-icon animate-float">
+                <img src="logo/Gemini_Generated_Image_scrvv5scrvv5scrv.png" alt="ECLIPSIA Logo" class="w-24 h-24 logo-glowing-dark">
+            </div>
+            <h2 class="text-4xl font-black text-glow-white-dark tracking-wider mb-3 animate-fade-in">Access ECLIPSIA-VOX</h2>
+            <p class="text-gray-400 mb-8 max-w-md animate-fade-in-delay">
+                To unlock the elite AI voice synthesis platform, please join our private Telegram channel for the latest updates and exclusive content.
+            </p>
+            
+            <!-- JOIN CHANNEL STATE (Initial State) -->
+            <div id="join-state" class="animate-fade-in">
+                <button onclick="promptAccess()" 
+                        class="btn-premium-dark text-white font-extrabold text-lg py-4 px-10 rounded-xl flex items-center justify-center space-x-3 glow-effect-dark">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22 6.924C22 6.417 21.673 6 21.258 6H2.742C2.327 6 2 6.417 2 6.924L2 17.076C2 17.583 2.327 18 2.742 18H21.258C21.673 18 22 17.583 22 17.076V6.924ZM19 10L12 14L5 10V9L12 13L19 9V10Z" fill="currentColor"/>
+                    </svg>
+                    <span>Join ECLIPSIA-TECHS Channel</span>
+                </button>
+            </div>
+
+            <!-- GET ACCESS STATE (Hidden until after first click) -->
+            <div id="access-state" class="hidden animate-fade-in">
+                <p class="text-sm text-glow-cyan-dark mb-4 font-semibold">Thank you for supporting us! Tap below to get access.</p>
+                <button onclick="unlockApp()" 
+                        class="btn-premium-dark text-white font-extrabold text-lg py-4 px-10 rounded-xl flex items-center justify-center space-x-3 glow-effect-dark">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11 15h2v2h-2v-2zm0-8h2v6h-2V7zm8 0h-4v2h4V7zm0 4h-4v2h4v-2zm0 4h-4v2h4v-2zm-8 4h-2v-2h2v2zm-4 0H5v-2h2v2zM5 7H3v2h2V7zm0 4H3v2h2v-2zm0 4H3v2h2v-2zm8-12c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zM12 20c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/>
+                    </svg>
+                    <span>Get Access</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Branding Link -->
+        <div class="text-center mt-8 text-xs text-gray-500 animate-fade-loop">
+            Powered by 
+            <a href="https://t.me/eclipsia_techs" 
+               target="_blank" 
+               class="text-glow-cyan-dark hover:text-blue-400 font-bold transition duration-300">
+               ECLIPSIA-TECHS
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // GATEWAY PAGE SPECIFIC SCRIPT
+        /**
+         * Elite access protocol - opens Telegram channel and transitions UI
+         */
+        function promptAccess() {
+            // Enhanced telemetry with animation
+            const joinButton = document.querySelector('#join-state button');
+            animateButtonPress(joinButton);
+            
+            // Open Telegram in new tab with enhanced user experience
+            window.open('https://t.me/eclipsia_techs', '_blank');
+            
+            // Add visual feedback
+            document.getElementById('join-state').style.opacity = '0.7';
+            setTimeout(() => {
+                document.getElementById('join-state').classList.add('hidden');
+                document.getElementById('access-state').classList.remove('hidden');
+                document.getElementById('access-state').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('access-state').style.opacity = '1';
+                    document.getElementById('access-state').style.transition = 'opacity 0.5s ease-in-out';
+                }, 50);
+            }, 300);
+        }
+
+        /**
+         * Unlocks the premium application interface
+         */
+        function unlockApp() {
+            // Add unlock animation
+            const accessButton = document.querySelector('#access-state button');
+            animateButtonPress(accessButton);
+            
+            // Set persistence with enhanced security
+            localStorage.setItem('eclipsiaVoxAccess', 'true');
+            localStorage.setItem('accessTimestamp', Date.now().toString());
+            
+            // Redirect to main application
+            window.location.href = 'main.html';
+        }
+
+        /**
+         * Button press animation
+         */
+        function animateButtonPress(button) {
+            button.style.transform = 'scale(0.95)';
+            button.style.transition = 'transform 0.1s ease';
+            
+            setTimeout(() => {
+                button.style.transform = 'scale(1)';
+            }, 100);
+        }
+
+        // Check if user already has access and redirect
+        document.addEventListener('DOMContentLoaded', () => {
+            const hasAccess = localStorage.getItem('eclipsiaVoxAccess');
+            const accessTime = localStorage.getItem('accessTimestamp');
+            const oneDay = 24 * 60 * 60 * 1000;
+            
+            if (hasAccess === 'true' && accessTime && (Date.now() - parseInt(accessTime)) < oneDay) {
+                // Redirect to main application
+                window.location.href = 'main.html';
+            }
+        });
+    </script>
+</body>
+</html>

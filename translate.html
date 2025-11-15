@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECLIPSIA-X: AI Language Translation & Speech Matrix</title>
+    
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Custom Styles for Dark Cosmic Theme */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0f1c;
+            overflow-x: hidden;
+            position: relative;
+            color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* Dark Cosmic Background Animation */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(125deg, #0a0f1c 0%, #1e3a8a 30%, #0a0f1c 100%);
+        }
+
+        .dark-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 15, 28, 0.7);
+            z-index: 1;
+        }
+
+        /* Simplified Glass Effect for Card */
+        .glass-effect-dark {
+            background: rgba(10, 15, 28, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(30, 64, 175, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .glass-effect-dark:hover {
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            box-shadow: 0 4px 40px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Glass Effect for Inputs/Textareas/Select/Audio */
+        .glass-input-dark {
+            background: rgba(17, 24, 39, 0.7);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            color: #e2e8f0;
+            resize: none;
+            transition: border-color 0.3s;
+        }
+
+        .glass-input-dark:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+
+        /* Custom animation for loading spinner */
+        .loader {
+            border-top-color: #3b82f6;
+            border-left-color: #3b82f6;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Status Message Styles */
+        .status-box {
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
+        .status-error {
+            background: rgba(127, 29, 29, 0.8);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            color: #fca5a5;
+        }
+        .status-success {
+            background: rgba(6, 78, 59, 0.8);
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            color: #6ee7b7;
+        }
+        .status-info {
+            background: rgba(30, 58, 138, 0.8);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            color: #93c5fd;
+        }
+
+        /* Responsive Layout */
+        @media (max-width: 768px) {
+            .flex-col-md {
+                flex-direction: column;
+            }
+            .w-full-md {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+            .swap-button-mobile {
+                transform: rotate(90deg);
+                margin: 1rem 0;
+            }
+        }
+        
+        /* Ensure audio controls are visible and styled */
+        #audio-player {
+            display: block;
+            width: 100%;
+        }
+
+        /* Make voice selector smaller on mobile */
+        @media (max-width: 768px) {
+            #voice-selector {
+                width: 100% !important;
+                margin-top: 0.5rem;
+            }
+            .target-header-flex {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        /* Navigation Button */
+        .nav-button {
+            background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.4);
+            background: linear-gradient(135deg, #1e40af 0%, #4f46e5 100%);
+        }
+    </style>
+</head>
+<body class="p-4">
+    <!-- Animated Background Elements -->
+    <div class="bg-animation">
+        <div class="dark-overlay"></div>
+    </div>
+
+    <div class="w-full max-w-4xl relative z-10 p-4">
+
+        <!-- Navigation Button -->
+        <div class="text-center mb-6">
+            <a href="index.html" class="nav-button">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Text to speech
+            </a>
+        </div>
+
+        <!-- 1. MAIN APP CARD -->
+        <div id="app-card-main" class="app-card p-6 md:p-8 rounded-2xl shadow-2xl glass-effect-dark">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-center mb-6 tracking-tight">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
+                    ECLIPSIA-X
+                </span>
+                <span class="block text-lg font-medium text-gray-400 mt-1">
+                    AI Translation & Speech Matrix
+                </span>
+            </h1>
+
+            <!-- Language and Input/Output Fields Container -->
+            <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
+
+                <!-- Source Panel -->
+                <div class="flex-1 w-full-md">
+                    <label for="source-lang-selector" class="block text-sm font-medium mb-2 text-blue-300">Source Language</label>
+                    <select id="source-lang-selector" class="w-full p-2 rounded-lg glass-input-dark cursor-pointer mb-3"></select>
+                    <textarea id="source-text-input"
+                              rows="6"
+                              maxlength="5000"
+                              placeholder="Enter text to translate here (max 5000 characters)..."
+                              class="w-full rounded-xl glass-input-dark p-4 focus:ring-blue-500 focus:border-blue-500 text-lg transition duration-200"></textarea>
+                    <div id="char-count" class="text-right text-sm text-gray-500 mt-1">0 / 5000</div>
+                </div>
+
+                <!-- Swap Button (Desktop) -->
+                <div class="hidden md:flex items-center justify-center">
+                    <button id="swap-langs-desktop"
+                            class="p-3 rounded-full bg-blue-600 hover:bg-blue-700 transition duration-300 shadow-lg hover:shadow-blue-500/50"
+                            title="Swap Languages">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 12H4m0 0l4-4m-4 4l4-4"></path></svg>
+                    </button>
+                </div>
+                
+                <!-- Swap Button (Mobile) -->
+                <div class="flex md:hidden items-center justify-center">
+                    <button id="swap-langs-mobile"
+                            class="swap-button-mobile p-3 rounded-full bg-blue-600 hover:bg-blue-700 transition duration-300 shadow-lg hover:shadow-blue-500/50"
+                            title="Swap Languages">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 12H4m0 0l4-4m-4 4l4-4"></path></svg>
+                    </button>
+                </div>
+
+                <!-- Target Panel (Updated for TTS) -->
+                <div class="flex-1 w-full-md">
+                    <!-- Target Language and Voice Selector -->
+                    <div class="flex justify-between items-end mb-2 target-header-flex">
+                        <label for="target-lang-selector" class="text-sm font-medium text-cyan-300">Target Language</label>
+                        <div class="flex items-center">
+                            <label for="voice-selector" class="text-sm font-medium text-gray-400 mr-2">Voice:</label>
+                            <select id="voice-selector" class="p-1 rounded-lg glass-input-dark cursor-pointer text-xs w-28"></select>
+                        </div>
+                    </div>
+
+                    <select id="target-lang-selector" class="w-full p-2 rounded-lg glass-input-dark cursor-pointer mb-3"></select>
+
+                    <textarea id="target-text-output"
+                              rows="6"
+                              readonly
+                              placeholder="Translation result will appear here..."
+                              class="w-full rounded-xl glass-input-dark p-4 text-gray-400 text-lg transition duration-200"></textarea>
+                              
+                    <!-- TTS Controls -->
+                    <div class="mt-3">
+                        <button id="read-aloud-button"
+                                class="px-4 py-2 w-full font-bold rounded-xl bg-green-600 text-white shadow-xl shadow-green-500/40 hover:bg-green-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span class="flex items-center justify-center">
+                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zm-7 8a7 7 0 1114 0 7 7 0 01-14 0z" clip-rule="evenodd"/></svg>
+                                Read Aloud
+                            </span>
+                        </button>
+                        <audio id="audio-player" class="w-full mt-2 h-10 rounded-xl glass-input-dark" controls></audio>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Translate Button and Status -->
+            <div class="mt-6 flex flex-col items-center">
+                <button id="translate-button"
+                        class="px-8 py-3 w-full md:w-auto font-bold text-lg rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-xl shadow-blue-500/40 hover:from-blue-600 hover:to-cyan-600 transition duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">
+                    Translate Text
+                </button>
+                <div id="status-message" class="status-box hidden w-full md:w-2/3 mt-4"></div>
+            </div>
+            
+            <!-- Branding Link -->
+            <div class="text-center mt-8 text-xs text-gray-500">
+                Powered by ECLIPSIA-TECHS
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================================================================================
+        // AI LANGUAGE TRANSLATION & TTS LOGIC
+        // ==================================================================================
+
+        // --- API CONFIGURATION ---
+        const apiKey = "AIzaSyAf8DKdUUrQ-Ie0cT88DaIeTiC9s_F1AUs"; // API Key will be provided by the Canvas environment
+        const translationApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        const ttsApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+        const MAX_RETRIES = 5;
+        const BASE_DELAY_MS = 1000;
+        const MAX_CHARS = 5000;
+
+        // --- Language Configuration ---
+        const TRANSLATION_LANGUAGES = [
+            { code: "en", name: "English" },
+            { code: "es", name: "Spanish" },
+            { code: "fr", name: "French" },
+            { code: "de", name: "German" },
+            { code: "ja", name: "Japanese" },
+            { code: "zh", name: "Chinese (Simplified)" },
+            { code: "ru", name: "Russian" },
+            { code: "ar", name: "Arabic" },
+            { code: "pt", name: "Portuguese" },
+            { code: "it", name: "Italian" },
+            { code: "ko", name: "Korean" },
+            { code: "hi", name: "Hindi" },
+            { code: "tr", name: "Turkish" },
+            { code: "nl", name: "Dutch" },
+            { code: "sv", name: "Swedish" },
+        ];
+        
+        // --- TTS Voice Configuration (Gemini TTS Prebuilt Voices) ---
+        const VOICES = [
+            { name: "Kore", label: "Kore (Firm, Default)" },
+            { name: "Fenrir", label: "Fenrir (Excitable)" },
+            { name: "Zephyr", label: "Zephyr (Bright)" },
+            { name: "Puck", label: "Puck (Upbeat)" },
+            { name: "Charon", label: "Charon (Informative)" },
+            { name: "Leda", label: "Leda (Youthful)" },
+            { name: "Alnilam", label: "Alnilam (Firm, Alt)" },
+            { name: "Sulafat", label: "Sulafat (Warm)" }
+        ];
+
+        // --- DOM Elements ---
+        const elements = {
+            sourceLangSelector: document.getElementById('source-lang-selector'),
+            targetLangSelector: document.getElementById('target-lang-selector'),
+            voiceSelector: document.getElementById('voice-selector'),
+            sourceTextInput: document.getElementById('source-text-input'),
+            targetTextOutput: document.getElementById('target-text-output'),
+            translateButton: document.getElementById('translate-button'),
+            readAloudButton: document.getElementById('read-aloud-button'),
+            audioPlayer: document.getElementById('audio-player'),
+            charCount: document.getElementById('char-count'),
+            statusMessage: document.getElementById('status-message'),
+            swapLangsDesktop: document.getElementById('swap-langs-desktop'),
+            swapLangsMobile: document.getElementById('swap-langs-mobile')
+        };
+
+        // --- Utility Functions ---
+
+        /**
+         * Converts a language code to its full name.
+         */
+        const getLangName = (code) => {
+            const lang = TRANSLATION_LANGUAGES.find(l => l.code === code);
+            return lang ? lang.name : code;
+        };
+
+        /**
+         * Displays a status message to the user.
+         */
+        const showStatus = (message, type) => {
+            elements.statusMessage.textContent = message;
+            elements.statusMessage.className = `status-box ${type === 'error' ? 'status-error' : type === 'success' ? 'status-success' : 'status-info'}`;
+            elements.statusMessage.classList.remove('hidden');
+        };
+
+        /**
+         * Updates the character count display.
+         */
+        const updateCharCount = () => {
+            const currentCount = elements.sourceTextInput.value.length;
+            elements.charCount.textContent = `${currentCount} / ${MAX_CHARS}`;
+            elements.charCount.classList.toggle('text-red-400', currentCount > MAX_CHARS);
+        };
+
+        /**
+         * Enables the button and removes the loading indicator.
+         */
+        const stopLoading = () => {
+            elements.translateButton.disabled = false;
+            elements.translateButton.innerHTML = 'Translate Text';
+        };
+
+        /**
+         * Disables the button and shows the loading indicator.
+         */
+        const startLoading = () => {
+            elements.translateButton.disabled = true;
+            elements.translateButton.innerHTML = `
+                <div class="flex items-center justify-center">
+                    <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6 mr-3"></div>
+                    Translating...
+                </div>
+            `;
+            elements.statusMessage.classList.add('hidden');
+        };
+
+        // --- Core Translation Logic ---
+
+        /**
+         * Implements exponential backoff for Translation API calls.
+         */
+        const fetchTranslationWithBackoff = async (textToTranslate, sourceLang, targetLang, retryCount = 0) => {
+            const systemPrompt = "You are an expert translator. Your task is to accurately translate the user's provided text. Only return the translated text without any explanation, additional commentary, or formatting (like quotes).";
+            const userQuery = `Translate the following text from ${sourceLang} to ${targetLang}: "${textToTranslate}"`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+            };
+
+            try {
+                const response = await fetch(translationApiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.status === 429 && retryCount < MAX_RETRIES) {
+                    const delay = BASE_DELAY_MS * Math.pow(2, retryCount) + Math.random() * 1000;
+                    showStatus(`Rate limit reached (429). Retrying in ${Math.round(delay / 1000)}s...`, 'info');
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    return fetchTranslationWithBackoff(textToTranslate, sourceLang, targetLang, retryCount + 1);
+                }
+
+                if (!response.ok) {
+                    throw new Error(`API returned status ${response.status}: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (!text) {
+                    throw new Error("Translation failed: Empty response from API.");
+                }
+
+                // Clean up potential quotation marks or unnecessary formatting added by the model
+                const cleanedText = text.trim().replace(/^['"]|['"]$/g, '');
+                return cleanedText;
+
+            } catch (error) {
+                console.error("Translation error:", error);
+                throw new Error(`Translation failed: ${error.message}`);
+            }
+        };
+
+        /**
+         * Main function to handle the translation process.
+         */
+        const translateText = async () => {
+            const textToTranslate = elements.sourceTextInput.value.trim();
+            const sourceLangCode = elements.sourceLangSelector.value;
+            const targetLangCode = elements.targetLangSelector.value;
+            const sourceLangName = getLangName(sourceLangCode);
+            const targetLangName = getLangName(targetLangCode);
+
+            elements.targetTextOutput.value = ''; // Clear previous output
+            elements.audioPlayer.pause();
+            elements.audioPlayer.removeAttribute('src');
+
+            if (textToTranslate.length === 0) {
+                showStatus("Please enter the text you wish to translate.", 'info');
+                return;
+            }
+
+            if (textToTranslate.length > MAX_CHARS) {
+                 showStatus(`Text is too long. Please limit to ${MAX_CHARS} characters.`, 'error');
+                return;
+            }
+
+            if (sourceLangCode === targetLangCode) {
+                showStatus("Source and target languages are the same. Please choose different languages.", 'error');
+                return;
+            }
+
+            startLoading();
+            showStatus(`Translating from ${sourceLangName} to ${targetLangName}...`, 'info');
+
+            try {
+                const translatedText = await fetchTranslationWithBackoff(textToTranslate, sourceLangName, targetLangName);
+                elements.targetTextOutput.value = translatedText;
+                showStatus("Translation completed successfully! ✅", 'success');
+            } catch (error) {
+                elements.targetTextOutput.value = 'An error occurred during translation.';
+                showStatus(error.message || "An unexpected error occurred. Please check the console.", 'error');
+            } finally {
+                stopLoading();
+            }
+        };
+
+        // --- TTS Utility Functions (For PCM to WAV conversion) ---
+
+        const base64ToArrayBuffer = (base64) => {
+            const binaryString = atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        };
+
+        const writeString = (view, offset, string) => {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
+        };
+
+        const writeUint16 = (view, offset, value) => {
+            view.setUint16(offset, value, true);
+        };
+
+        const writeUint32 = (view, offset, value) => {
+            view.setUint32(offset, value, true);
+        };
+
+        /**
+         * Converts 16-bit signed PCM audio data to a WAV Blob.
+         */
+        const pcmToWav = (pcm16, sampleRate) => {
+            const numChannels = 1;
+            const bytesPerSample = 2; // 16-bit PCM
+            const blockAlign = numChannels * bytesPerSample;
+            const byteRate = sampleRate * blockAlign;
+            const dataSize = pcm16.length * bytesPerSample;
+            const buffer = new ArrayBuffer(44 + dataSize); // 44 bytes for WAV header
+
+            const view = new DataView(buffer);
+
+            // RIFF chunk
+            writeString(view, 0, 'RIFF');
+            writeUint32(view, 4, 36 + dataSize); // ChunkSize
+            writeString(view, 8, 'WAVE');
+
+            // fmt chunk
+            writeString(view, 12, 'fmt ');
+            writeUint32(view, 16, 16); // Subchunk1Size (16 for PCM)
+            writeUint16(view, 20, 1); // AudioFormat (1 for PCM)
+            writeUint16(view, 22, numChannels); // NumChannels
+            writeUint32(view, 24, sampleRate); // SampleRate
+            writeUint32(view, 28, byteRate); // ByteRate
+            writeUint16(view, 32, blockAlign); // BlockAlign
+            writeUint16(view, 34, 16); // BitsPerSample
+
+            // data chunk
+            writeString(view, 36, 'data');
+            writeUint32(view, 40, dataSize); // Subchunk2Size
+
+            // Write PCM data
+            let offset = 44;
+            for (let i = 0; i < pcm16.length; i++) {
+                // PCM is 16-bit signed, so we use setInt16
+                view.setInt16(offset, pcm16[i], true);
+                offset += 2;
+            }
+
+            return new Blob([view], { type: 'audio/wav' });
+        };
+
+        // --- Core TTS Logic ---
+
+        const startTtsLoading = () => {
+            elements.readAloudButton.disabled = true;
+            elements.readAloudButton.innerHTML = `
+                <span class="flex items-center justify-center">
+                    <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-5 w-5 mr-2"></div>
+                    Synthesizing...
+                </span>
+            `;
+            elements.audioPlayer.pause();
+            elements.audioPlayer.removeAttribute('src');
+            elements.audioPlayer.load();
+        };
+
+        const stopTtsLoading = () => {
+            elements.readAloudButton.disabled = false;
+            elements.readAloudButton.innerHTML = `
+                <span class="flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zm-7 8a7 7 0 1114 0 7 7 0 01-14 0z" clip-rule="evenodd"/></svg>
+                    Read Aloud
+                </span>
+            `;
+        };
+
+        /**
+         * Implements exponential backoff for TTS API calls.
+         */
+        const fetchTTSWithBackoff = async (textToSpeak, voiceName, retryCount = 0) => {
+            const payload = {
+                contents: [{ parts: [{ text: textToSpeak }] }],
+                generationConfig: {
+                    responseModalities: ["AUDIO"],
+                    speechConfig: {
+                        voiceConfig: {
+                            prebuiltVoiceConfig: { voiceName: voiceName }
+                        }
+                    }
+                },
+                model: "gemini-2.5-flash-preview-tts"
+            };
+
+            try {
+                const response = await fetch(ttsApiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.status === 429 && retryCount < MAX_RETRIES) {
+                    const delay = BASE_DELAY_MS * Math.pow(2, retryCount) + Math.random() * 1000;
+                    showStatus(`TTS rate limit reached (429). Retrying in ${Math.round(delay / 1000)}s...`, 'info');
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    return fetchTTSWithBackoff(textToSpeak, voiceName, retryCount + 1);
+                }
+
+                if (!response.ok) {
+                    throw new Error(`TTS API returned status ${response.status}: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                const part = result?.candidates?.[0]?.content?.parts?.[0];
+                const audioData = part?.inlineData?.data;
+                const mimeType = part?.inlineData?.mimeType;
+
+                if (!audioData || !mimeType || !mimeType.startsWith("audio/")) {
+                    throw new Error("TTS failed: Invalid or missing audio response from API.");
+                }
+                
+                // Extract sample rate from mimeType, e.g., audio/L16;rate=24000
+                const rateMatch = mimeType.match(/rate=(\d+)/);
+                const sampleRate = rateMatch ? parseInt(rateMatch[1], 10) : 24000; // Default to 24000 if not found
+
+                const pcmData = base64ToArrayBuffer(audioData);
+                const pcm16 = new Int16Array(pcmData);
+                
+                return pcmToWav(pcm16, sampleRate); // Returns a playable WAV Blob
+
+            } catch (error) {
+                console.error("TTS error:", error);
+                throw new Error(`Text-to-Speech failed: ${error.message}`);
+            }
+        };
+
+        /**
+         * Handles the Text-to-Speech process for the translated output.
+         */
+        const textToSpeech = async () => {
+            const textToSpeak = elements.targetTextOutput.value.trim();
+            const voiceName = elements.voiceSelector.value;
+            const voiceLabel = VOICES.find(v => v.name === voiceName)?.label || voiceName;
+
+            elements.audioPlayer.pause();
+            elements.audioPlayer.removeAttribute('src');
+            
+            if (textToSpeak.length === 0) {
+                showStatus("No translated text available to read aloud.", 'info');
+                return;
+            }
+
+            if (textToSpeak.length > MAX_CHARS) {
+                showStatus(`Text is too long for speech synthesis. Please limit to ${MAX_CHARS} characters.`, 'error');
+                return;
+            }
+            
+            startTtsLoading();
+            showStatus(`Synthesizing speech using ${voiceLabel}...`, 'info');
+
+            try {
+                const audioBlob = await fetchTTSWithBackoff(textToSpeak, voiceName);
+                const audioUrl = URL.createObjectURL(audioBlob);
+                
+                elements.audioPlayer.src = audioUrl;
+                elements.audioPlayer.play();
+                showStatus("Speech synthesis complete. Playing audio... 🔊", 'success');
+                
+            } catch (error) {
+                showStatus(error.message || "An unexpected error occurred during speech synthesis.", 'error');
+            } finally {
+                stopTtsLoading();
+            }
+        };
+
+        /**
+         * Swaps the values of the source and target language selectors.
+         */
+        const swapLanguages = () => {
+            const tempLang = elements.sourceLangSelector.value;
+            elements.sourceLangSelector.value = elements.targetLangSelector.value;
+            elements.targetLangSelector.value = tempLang;
+
+            // Also swap text if target has content
+            const tempText = elements.sourceTextInput.value;
+            elements.sourceTextInput.value = elements.targetTextOutput.value;
+            elements.targetTextOutput.value = tempText;
+
+            updateCharCount();
+            showStatus("Languages and texts swapped.", 'info');
+        };
+
+        /**
+         * Populates the language and voice dropdowns.
+         */
+        const populateLanguageSelectors = () => {
+            const langFrag = document.createDocumentFragment();
+
+            TRANSLATION_LANGUAGES.forEach(lang => {
+                const sourceOption = document.createElement('option');
+                sourceOption.value = lang.code;
+                sourceOption.textContent = lang.name;
+                langFrag.appendChild(sourceOption);
+
+                const targetOption = sourceOption.cloneNode(true);
+                elements.targetLangSelector.appendChild(targetOption);
+            });
+            elements.sourceLangSelector.appendChild(langFrag);
+
+            // Set language defaults: English to Spanish
+            elements.sourceLangSelector.value = 'en';
+            elements.targetLangSelector.value = 'es';
+            
+            // Voice Selector Population
+            const voiceFrag = document.createDocumentFragment();
+            VOICES.forEach(v => {
+                const option = document.createElement('option');
+                option.value = v.name;
+                option.textContent = v.label;
+                voiceFrag.appendChild(option);
+            });
+            elements.voiceSelector.appendChild(voiceFrag);
+            elements.voiceSelector.value = 'Kore'; // Set default voice
+        };
+
+        // --- Event Listeners and Initialization ---
+        window.onload = () => {
+            populateLanguageSelectors();
+
+            // Setup Event Listeners
+            elements.translateButton.addEventListener('click', translateText);
+            elements.readAloudButton.addEventListener('click', textToSpeech);
+            elements.sourceTextInput.addEventListener('input', updateCharCount);
+            elements.swapLangsDesktop.addEventListener('click', swapLanguages);
+            elements.swapLangsMobile.addEventListener('click', swapLanguages);
+
+            // Initial state update
+            updateCharCount();
+            stopTtsLoading();
+            showStatus("Ready for translation. Select languages and enter text.", 'info');
+        };
+
+        // Add to Home Screen prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // You can show your custom install button here
+            console.log('PWA installation available');
+        });
+    </script>
+</body>
+</html>
