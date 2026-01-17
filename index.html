@@ -1,166 +1,177 @@
-<!-- index.html - GATEWAY PAGE -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ECLIPSIA-VOX: Elite AI Voice Synthesis Platform</title>
-    <!-- Load Tailwind CSS for modern, responsive styling -->
+    <title>ECLIPSIA-VOX | AI Voice & Translation</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* Navigation Button Styles */
-        .nav-button {
-            background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 20px;
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #02040a; /* Pure deep dark */
+            color: #f8fafc;
+            overflow-x: hidden;
         }
 
-        .nav-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.4);
-            background: linear-gradient(135deg, #1e40af 0%, #4f46e5 100%);
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s ease;
         }
 
-        .nav-button:active {
-            transform: translateY(0);
+        .glass-card:hover {
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            background: rgba(15, 23, 42, 0.8);
+            transform: translateY(-5px);
+        }
+
+        .btn-gradient {
+            background: linear-gradient(135deg, #0891b2 0%, #1e40af 100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 30px rgba(30, 64, 175, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .floating-arrow {
+            animation: bounceLeft 2s infinite;
+        }
+
+        @keyframes bounceLeft {
+            0%, 20%, 50%, 80%, 100% {transform: translateX(0);}
+            40% {transform: translateX(-12px);}
+            60% {transform: translateX(-6px);}
+        }
+
+        .feature-icon {
+            background: rgba(34, 211, 238, 0.05);
+            border: 1px solid rgba(34, 211, 238, 0.1);
+        }
+
+        /* Subtle grid overlay */
+        .bg-grid {
+            background-image: linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(34, 211, 238, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        .hero-glow {
+            background: radial-gradient(circle at center, rgba(30, 64, 175, 0.15) 0%, transparent 70%);
         }
     </style>
 </head>
-<body class="p-4 flex items-center justify-center container">
-    <!-- Animated Background Elements -->
-    <div class="bg-animation">
-        <div class="stars"></div>
-        <div class="stars2"></div>
-        <div class="stars3"></div>
-        <div class="nebula"></div>
-        <div class="pulsar"></div>
-        <div class="dark-overlay"></div>
-    </div>
+<body class="bg-grid">
 
-    <div class="w-full max-w-2xl relative z-10">
+    <!-- Header / Navbar -->
+    <nav class="max-w-7xl mx-auto px-6 py-8 flex justify-between items-center relative z-20">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-cyan-600 rounded-xl flex items-center justify-center shadow-[0_0_25px_rgba(8,145,178,0.4)]">
+                <i class="fas fa-bolt text-white"></i>
+            </div>
+            <span class="text-2xl font-extrabold tracking-tighter text-white">ECLIPSIA<span class="text-cyan-500">-VOX</span></span>
+        </div>
+        <div class="hidden md:flex space-x-10 text-sm font-semibold text-gray-500 uppercase tracking-widest">
+            <a href="#features" class="hover:text-cyan-400 transition">Features</a>
+        </div>
+        <a href="main.html" class="btn-gradient px-8 py-3 rounded-full text-sm font-extrabold uppercase tracking-wider text-white">Join Now</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <main class="max-w-7xl mx-auto px-6 pt-16 pb-32 text-center relative hero-glow">
+        <!-- Deep Ambient Glows -->
+        <div class="absolute top-[-100px] left-1/4 w-[500px] h-[500px] bg-blue-900/10 blur-[150px] rounded-full -z-10"></div>
+        <div class="absolute bottom-[-100px] right-1/4 w-[400px] h-[400px] bg-cyan-900/10 blur-[150px] rounded-full -z-10"></div>
         
-        <!-- TELEGRAM GATEKEEPER SCREEN (Initially Visible) -->
-        <div id="app-gatekeeper" class="app-card p-10 md:p-16 rounded-2xl shadow-2xl text-center flex flex-col items-center glass-effect-dark">
-            <!-- Logo in Gatekeeper -->
-            <div class="gatekeeper-icon animate-float">
-                <img src="logo/Gemini_Generated_Image_scrvv5scrvv5scrv.png" alt="ECLIPSIA Logo" class="w-24 h-24 logo-glowing-dark">
-            </div>
-            <h2 class="text-4xl font-black text-glow-white-dark tracking-wider mb-3 animate-fade-in">Access ECLIPSIA-VOX</h2>
-            <p class="text-gray-400 mb-8 max-w-md animate-fade-in-delay">
-                To unlock the elite AI voice synthesis platform, please join our private Telegram channel for the latest updates and exclusive content.
-            </p>
-            
-            <!-- JOIN CHANNEL STATE (Initial State) -->
-            <div id="join-state" class="animate-fade-in">
-                <button onclick="promptAccess()" 
-                        class="btn-premium-dark text-white font-extrabold text-lg py-4 px-10 rounded-xl flex items-center justify-center space-x-3 glow-effect-dark">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M22 6.924C22 6.417 21.673 6 21.258 6H2.742C2.327 6 2 6.417 2 6.924L2 17.076C2 17.583 2.327 18 2.742 18H21.258C21.673 18 22 17.583 22 17.076V6.924ZM19 10L12 14L5 10V9L12 13L19 9V10Z" fill="currentColor"/>
-                    </svg>
-                    <span>Join ECLIPSIA-TECHS Channel</span>
-                </button>
-            </div>
-
-            <!-- GET ACCESS STATE (Hidden until after first click) -->
-            <div id="access-state" class="hidden animate-fade-in">
-                <p class="text-sm text-glow-cyan-dark mb-4 font-semibold">Thank you for supporting us! Tap below to get access.</p>
-                <button onclick="unlockApp()" 
-                        class="btn-premium-dark text-white font-extrabold text-lg py-4 px-10 rounded-xl flex items-center justify-center space-x-3 glow-effect-dark">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M11 15h2v2h-2v-2zm0-8h2v6h-2V7zm8 0h-4v2h4V7zm0 4h-4v2h4v-2zm0 4h-4v2h4v-2zm-8 4h-2v-2h2v2zm-4 0H5v-2h2v2zM5 7H3v2h2V7zm0 4H3v2h2v-2zm0 4H3v2h2v-2zm8-12c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zM12 20c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/>
-                    </svg>
-                    <span>Get Access</span>
-                </button>
-            </div>
+        <div class="inline-flex items-center space-x-3 bg-white/5 border border-white/10 px-5 py-2.5 rounded-full mb-10 backdrop-blur-xl">
+            <span class="relative flex h-2.5 w-2.5">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-500 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-400"></span>
+            </span>
+            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-500">Premium AI Access</span>
         </div>
 
-        <!-- Branding Link -->
-        <div class="text-center mt-8 text-xs text-gray-500 animate-fade-loop">
-            Powered by 
-            <a href="https://t.me/eclipsia_techs" 
-               target="_blank" 
-               class="text-glow-cyan-dark hover:text-blue-400 font-bold transition duration-300">
-               ECLIPSIA-TECHS
+        <h1 class="text-6xl md:text-8xl font-extrabold mb-8 tracking-tighter leading-none">
+            Elite AI Voice <br/> 
+            <span class="text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500">Processing Hub</span>
+        </h1>
+        
+        <p class="text-gray-500 text-lg md:text-2xl max-w-3xl mx-auto mb-6 font-medium leading-relaxed">
+            The ultimate workstation for lifelike speech synthesis and intelligent translation. Powered by ECLIPSIA-TECHS.
+        </p>
+
+        <!-- New Listening Description -->
+        <p class="text-cyan-500/80 text-sm md:text-lg max-w-2xl mx-auto mb-14 font-semibold italic">
+            You can use this tool to turn text into audio and listen to it off-screen—meaning you can leave the app and still listen to your audio seamlessly.
+        </p>
+
+        <div class="flex flex-col md:flex-row items-center justify-center gap-6 mb-32">
+            <a href="main.html" class="btn-gradient w-full md:w-auto px-12 py-5 rounded-2xl text-xl font-black flex items-center justify-center gap-4 text-white">
+                Launch Tool <i class="fas fa-play text-xs"></i>
             </a>
+            
+            <!-- Telegram CTA -->
+            <div class="flex items-center gap-5 group">
+                <i class="fas fa-chevron-right text-cyan-500 text-xl floating-arrow"></i>
+                <a href="https://t.me/eclipsia_techs" target="_blank" class="bg-white/[0.03] hover:bg-white/[0.07] border border-white/5 px-10 py-5 rounded-2xl text-xl font-black flex items-center gap-4 transition-all duration-300">
+                    <i class="fab fa-telegram text-cyan-500"></i>
+                    Join Telegram
+                </a>
+            </div>
         </div>
-    </div>
 
-    <script>
-        // GATEWAY PAGE SPECIFIC SCRIPT
-        /**
-         * Elite access protocol - opens Telegram channel and transitions UI
-         */
-        function promptAccess() {
-            // Enhanced telemetry with animation
-            const joinButton = document.querySelector('#join-state button');
-            animateButtonPress(joinButton);
-            
-            // Open Telegram in new tab with enhanced user experience
-            window.open('https://t.me/eclipsia_techs', '_blank');
-            
-            // Add visual feedback
-            document.getElementById('join-state').style.opacity = '0.7';
-            setTimeout(() => {
-                document.getElementById('join-state').classList.add('hidden');
-                document.getElementById('access-state').classList.remove('hidden');
-                document.getElementById('access-state').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('access-state').style.opacity = '1';
-                    document.getElementById('access-state').style.transition = 'opacity 0.5s ease-in-out';
-                }, 50);
-            }, 300);
-        }
+        <!-- Feature Grid -->
+        <div id="features" class="grid grid-cols-1 md:grid-cols-3 gap-10 text-left">
+            <div class="glass-card p-10">
+                <div class="w-16 h-16 rounded-2xl mb-8 flex items-center justify-center feature-icon shadow-inner">
+                    <i class="fas fa-wave-square text-2xl text-cyan-500"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4 text-white">Neural TTS</h3>
+                <p class="text-gray-500 leading-relaxed font-medium">Generate studio-quality voiceovers from text with human-like breathing and natural pauses.</p>
+            </div>
 
-        /**
-         * Unlocks the premium application interface
-         */
-        function unlockApp() {
-            // Add unlock animation
-            const accessButton = document.querySelector('#access-state button');
-            animateButtonPress(accessButton);
-            
-            // Set persistence with enhanced security
-            localStorage.setItem('eclipsiaVoxAccess', 'true');
-            localStorage.setItem('accessTimestamp', Date.now().toString());
-            
-            // Redirect to main application
-            window.location.href = 'main.html';
-        }
+            <div class="glass-card p-10">
+                <div class="w-16 h-16 rounded-2xl mb-8 flex items-center justify-center feature-icon shadow-inner">
+                    <i class="fas fa-globe-americas text-2xl text-blue-500"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4 text-white">Global translation</h3>
+                <p class="text-gray-500 leading-relaxed font-medium">Break linguistic barriers instantly. Translate scripts across 50+ languages with zero context loss.</p>
+            </div>
 
-        /**
-         * Button press animation
-         */
-        function animateButtonPress(button) {
-            button.style.transform = 'scale(0.95)';
-            button.style.transition = 'transform 0.1s ease';
-            
-            setTimeout(() => {
-                button.style.transform = 'scale(1)';
-            }, 100);
-        }
+            <div class="glass-card p-10">
+                <div class="w-16 h-16 rounded-2xl mb-8 flex items-center justify-center feature-icon shadow-inner">
+                    <i class="fas fa-headphones text-2xl text-purple-500"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4 text-white">Background Play</h3>
+                <p class="text-gray-500 leading-relaxed font-medium">Listen to your generated content even with your screen off or while using other applications.</p>
+            </div>
+        </div>
+    </main>
 
-        // Check if user already has access and redirect
-        document.addEventListener('DOMContentLoaded', () => {
-            const hasAccess = localStorage.getItem('eclipsiaVoxAccess');
-            const accessTime = localStorage.getItem('accessTimestamp');
-            const oneDay = 24 * 60 * 60 * 1000;
-            
-            if (hasAccess === 'true' && accessTime && (Date.now() - parseInt(accessTime)) < oneDay) {
-                // Redirect to main application
-                window.location.href = 'main.html';
-            }
-        });
-    </script>
+    <!-- Footer -->
+    <footer class="border-t border-white/5 bg-black/80 py-16">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-10">
+            <div class="flex flex-col items-center md:items-start gap-4">
+                <div class="text-xl font-black tracking-tighter text-white">ECLIPSIA<span class="text-cyan-500">-VOX</span></div>
+                <div class="text-sm text-gray-600 font-bold uppercase tracking-widest">
+                    &copy; 2026 Developed by <span class="text-gray-400">Lord Moonlight</span>
+                </div>
+            </div>
+            <div class="flex space-x-8">
+                <a href="https://t.me/eclipsia_techs" class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-cyan-600 transition-all duration-300">
+                    <i class="fab fa-telegram-plane text-xl"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
 </body>
 </html>
