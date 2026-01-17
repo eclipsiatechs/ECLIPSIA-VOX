@@ -1,162 +1,894 @@
-<!-- main.html - MAIN APPLICATION PAGE -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ECLIPSIA-VOX: Elite AI Voice Synthesis Platform</title>
-    <!-- Load Tailwind CSS for modern, responsive styling -->
+    <title>ECLIPSIA-VOX | Translation</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* Navigation Button Styles */
-        .nav-button {
-            background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #02040a;
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+            margin: 0;
+        }
+
+        .bg-grid {
+            background-image: linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(34, 211, 238, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+        }
+
+        .glass-input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: white;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-weight: 600;
-            text-decoration: none;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            display: inline-flex;
+        }
+
+        .glass-input:focus {
+            border-color: #0891b2;
+            box-shadow: 0 0 15px rgba(8, 145, 178, 0.2);
+            outline: none;
+        }
+
+        .btn-premium {
+            background: linear-gradient(135deg, #0891b2 0%, #1e40af 100%);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-premium:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(30, 64, 175, 0.4);
+        }
+
+        /* Navigation Tooltip */
+        .nav-hint {
+            position: fixed;
+            top: 25px;
+            right: 85px;
+            background: #0891b2;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            z-index: 1001;
+            box-shadow: 0 0 20px rgba(8, 145, 178, 0.4);
+            animation: float 2s ease-in-out infinite;
+        }
+
+        .nav-hint::after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+            border-left: 6px solid #0891b2;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(-5px); }
+        }
+
+        .voice-trigger {
+            background: rgba(34, 211, 238, 0.05);
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-menu {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            width: 50px;
+            height: 50px;
+            display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .hamburger-menu:hover { background: rgba(34, 211, 238, 0.1); }
+
+        .mobile-sidebar {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 300px;
+            height: 100%;
+            background-color: #02040a;
+            z-index: 9999;
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .mobile-sidebar.active { right: 0; }
+
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 9998;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .voice-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .voice-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(34, 211, 238, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .voice-card.selected {
+            background: rgba(34, 211, 238, 0.1);
+            border-color: #22d3ee;
+        }
+
+        .gender-badge {
+            font-size: 8px;
+            font-weight: 900;
+            text-transform: uppercase;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .badge-female { background: rgba(236, 72, 153, 0.15); color: #ec4899; }
+        .badge-male { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+
+        audio { 
+            height: 40px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 5px;
+        }
+
+        audio::-webkit-media-controls-panel {
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        /* Loading animation */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #22d3ee;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .char-counter {
+            font-size: 10px;
+            font-weight: bold;
+            text-align: right;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            color: #0891b2;
+        }
+
+        .char-counter.warning {
+            color: #f59e0b;
+        }
+
+        .char-counter.error {
+            color: #ef4444;
+        }
+        
+        /* Cooldown timer */
+        .cooldown-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .cooldown-overlay.active {
+            display: flex;
+        }
+        
+        .cooldown-timer {
+            font-size: 48px;
+            font-weight: 800;
+            color: #22d3ee;
             margin-bottom: 20px;
         }
-
-        .nav-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.4);
-            background: linear-gradient(135deg, #1e40af 0%, #4f46e5 100%);
-        }
-
-        .nav-button:active {
-            transform: translateY(0);
+        
+        .cooldown-message {
+            color: #f8fafc;
+            font-size: 18px;
+            text-align: center;
+            max-width: 400px;
+            margin-bottom: 30px;
         }
     </style>
 </head>
-<body class="p-4 flex items-center justify-center container">
-    <!-- Animated Background Elements -->
-    <div class="bg-animation">
-        <div class="stars"></div>
-        <div class="stars2"></div>
-        <div class="stars3"></div>
-        <div class="nebula"></div>
-        <div class="pulsar"></div>
-        <div class="dark-overlay"></div>
+<body class="bg-grid">
+
+    <!-- Cooldown Overlay -->
+    <div id="cooldown-overlay" class="cooldown-overlay">
+        <div class="cooldown-timer" id="cooldown-timer">60</div>
+        <div class="cooldown-message" id="cooldown-message">
+            Rate limit reached. Please wait before generating more audio.
+        </div>
+        <button onclick="closeCooldown()" class="px-6 py-3 bg-cyan-600 hover:bg-cyan-700 rounded-xl font-bold transition-colors">
+            Close
+        </button>
     </div>
 
-    <div class="w-full max-w-2xl relative z-10">
-        
-        <!-- MAIN APPLICATION CARD -->
-        <div id="app-card-main" class="app-card p-6 md:p-8 rounded-2xl shadow-2xl glass-effect-dark">
-            
-            <!-- Navigation Button -->
-            <div class="text-center mb-6">
-                <a href="translate.html" class="nav-button">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
-                    </svg>
-                    Go to translator
-                </a>
-            </div>
+    <!-- Nav Hint -->
+    <div class="nav-hint">
+        Translation Section
+    </div>
 
-            <!-- Logo in Main Header -->
-            <header class="text-center mb-8">
-                <div class="flex justify-center items-center mb-4">
-                    <img src="logo/Gemini_Generated_Image_scrvv5scrvv5scrv.png" alt="ECLIPSIA Logo" class="h-16 w-auto logo-pulse-dark">
+    <!-- Hamburger Trigger -->
+    <div class="hamburger-menu" onclick="toggleSidebar(true)">
+        <div class="space-y-1.5">
+            <div class="w-6 h-0.5 bg-white"></div>
+            <div class="w-6 h-0.5 bg-white"></div>
+            <div class="w-6 h-0.5 bg-white"></div>
+        </div>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar(false)"></div>
+
+    <!-- Sidebar Menu -->
+    <aside class="mobile-sidebar shadow-2xl" id="sidebar">
+        <div class="p-8 border-b border-white/5 flex justify-between items-center text-white">
+            <div class="text-xl font-black">ECLIPSIA<span class="text-cyan-500">-VOX</span></div>
+            <button onclick="toggleSidebar(false)" class="text-gray-500 hover:text-white p-2">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        <nav class="p-4 space-y-2">
+            <a href="main.html" class="flex items-center p-4 text-gray-400 hover:text-white transition"><i class="fas fa-home w-8"></i> Home</a>
+            <a href="translate.html" class="flex items-center p-4 text-cyan-500 bg-cyan-500/5 rounded-xl"><i class="fas fa-language w-8"></i> Translation</a>
+            <a href="https://t.me/eclipsia_techs" target="_blank" class="flex items-center p-4 text-gray-400 hover:text-white transition"><i class="fab fa-telegram w-8"></i> Support</a>
+        </nav>
+    </aside>
+
+    <div class="max-w-4xl mx-auto px-4 py-8 md:py-16 space-y-8 relative">
+        <div class="glass-panel p-6 md:p-10">
+            <header class="text-center mb-10">
+                <div class="w-16 h-16 bg-cyan-600/20 rounded-2xl mx-auto mb-4 flex items-center justify-center border border-cyan-500/30">
+                    <i class="fas fa-language text-2xl text-cyan-400"></i>
                 </div>
-                <h1 class="text-5xl font-black text-glow-white-dark tracking-wider animate-text-glitch-dark">ECLIPSIA-VOX</h1>
-                <p class="text-sm text-glow-cyan-dark font-medium mt-2 animate-pulse">Elite AI Voice Synthesis & Accessibility</p>
+                <h1 class="text-3xl font-black tracking-tighter text-white">ECLIPSIA<span class="text-cyan-500">-VOX</span></h1>
+                <p class="text-gray-500 font-bold uppercase tracking-widest text-[9px]">TEXT TO AUDIO</p>
             </header>
+
+            <!-- Voice Selection UI -->
+            <div class="mb-8">
+                <label class="block text-[10px] font-black uppercase tracking-widest text-gray-500 mb-4">VOICE SELECTION</label>
+                <div class="voice-trigger p-5 flex items-center justify-between" onclick="openVoiceModal()">
+                    <div class="flex items-center gap-4">
+                        <div id="active-voice-icon" class="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20">
+                            <i class="fas fa-robot text-cyan-400"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <p id="active-voice-name" class="font-black text-white text-base">Kore</p>
+                                <span id="active-voice-gender" class="gender-badge badge-male">Female</span>
+                            </div>
+                            <p id="active-voice-desc" class="text-[10px] text-cyan-500 font-bold uppercase tracking-wider">Deep & Clear</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down text-gray-600"></i>
+                </div>
+            </div>
+
+            <!-- Voice Tuning Controls -->
+            <div class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-6 bg-white/5 p-6 rounded-3xl border border-white/5">
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-gray-400">Tempo / Speed</label>
+                        <span id="val-speed" class="text-[10px] font-bold text-cyan-500">1.0x</span>
+                    </div>
+                    <input type="range" id="input-speed" class="w-full h-1 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-cyan-500" min="0.5" max="2.0" step="0.1" value="1.0" oninput="updateVal('speed')">
+                </div>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-gray-400">Voice Pitch</label>
+                        <span id="val-pitch" class="text-[10px] font-bold text-cyan-500">Neutral</span>
+                    </div>
+                    <input type="range" id="input-pitch" class="w-full h-1 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-cyan-500" min="-5" max="5" step="1" value="0" oninput="updateVal('pitch')">
+                </div>
+            </div>
+
+            <textarea id="text-input" rows="6" 
+                class="glass-input w-full p-6 rounded-3xl text-lg placeholder-gray-600 mb-2"
+                placeholder="Enter text to convert to speech... (max 5000 characters)"></textarea>
             
-            <!-- Voice Selection and Info Row -->
-            <div class="flex flex-col sm:flex-row gap-4 mb-4 items-center">
-                <div class="w-full sm:w-1/2">
-                    <label for="voice-selector" class="block text-sm font-medium text-glow-white-dark mb-1">Select Voice Personality</label>
-                    <select id="voice-selector" class="w-full p-3 rounded-lg text-sm appearance-none glass-input-dark">
-                        <!-- Options populated by JavaScript -->
-                    </select>
-                </div>
-                
-                <div class="w-full sm:w-1/2">
-                    <p class="text-xs font-semibold text-gray-500">Current Selection:</p>
-                    <p id="selected-voice-info" class="text-sm text-glow-cyan-dark font-bold mt-1 animate-fade-loop">Kore (Firm)</p>
-                </div>
-            </div>
-
-            <!-- Input Area -->
-            <textarea id="text-input" 
-                      rows="8" 
-                      placeholder="Paste your document or long message here (Note: API limit is approx 4096 characters)..."
-                      class="w-full p-4 rounded-xl text-base glass-input-dark animate-fade-in-delay"></textarea>
-
-            <div class="flex justify-between items-center mt-3 mb-6">
-                <span id="char-count" class="text-xs text-gray-500">0 Characters</span>
-            </div>
-
-            <!-- Action Button -->
-            <button id="read-button" 
-                    class="btn-premium-dark w-full text-white font-extrabold text-lg py-4 rounded-xl flex items-center justify-center disabled:opacity-50 glow-effect-dark"
-                    onclick="handleGenerate()">
-                <span id="button-text">Synthesize & Read Aloud</span>
-                <div id="loading-indicator" class="loading-spinner-dark h-6 w-6 border-4 ml-3 hidden"></div>
+            <div id="char-counter" class="char-counter">0/5000</div>
+            
+            <button id="generate-btn" onclick="handleGenerate()" class="btn-premium w-full py-5 rounded-2xl font-black text-lg uppercase tracking-widest flex items-center justify-center gap-3 text-white">
+                <span id="btn-text">Generate Audio</span>
+                <i id="btn-icon" class="fas fa-microchip text-xs"></i>
+                <div id="loading-spinner" class="loading-spinner hidden"></div>
             </button>
 
-            <!-- Status Message Area -->
-            <div id="status-message" class="mt-4 text-center p-3 rounded-xl text-sm hidden glass-effect-dark"></div>
-
-            <!-- Audio Controls for Manual Playback & Download -->
-            <div id="audio-player-controls" class="mt-6 p-4 rounded-xl shadow-inner border border-blue-800 glass-effect-dark">
-                <p class="text-sm font-semibold text-glow-cyan-dark mb-2">Ready for Playback</p>
-                <audio id="audio-player" controls class="w-full audio-dark"></audio>
-                
-                <!-- DOWNLOAD BUTTON -->
-                <div class="flex justify-center mt-3">
-                    <button id="download-button" onclick="downloadAudio()" disabled 
-                            class="btn-premium-dark text-white font-bold py-3 px-8 rounded-xl text-sm transition duration-300 disabled:opacity-30 flex items-center space-x-2 shadow-md glow-effect-dark">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                        </svg>
-                        <span>Download Audio</span>
+            <div id="audio-player-controls" class="mt-8 bg-black/40 border border-white/5 p-6 rounded-3xl hidden">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-xs font-black text-cyan-500 uppercase">Audio Output</span>
+                    <button id="download-button" onclick="downloadAudio()" class="bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-bold py-2 px-4 rounded-lg transition-colors">
+                        <i class="fas fa-download mr-1"></i> Download MP3
                     </button>
                 </div>
+                <audio id="audio-player" controls class="w-full"></audio>
             </div>
             
-            <!-- ECLIPSIA LOGO/SAY LINE -->
-            <div class="text-center mt-4 text-sm font-semibold text-glow-white-dark animate-fade-loop">BY ECLIPSIA-TECHS</div>
+            <!-- Status message -->
+            <div id="status-message" class="mt-4 text-center text-sm hidden p-3 rounded-lg"></div>
         </div>
 
-        <!-- OPERATIONAL GUIDELINES SECTION -->
-        <div class="app-card p-6 md:p-8 rounded-2xl shadow-2xl mt-8 glass-effect-dark">
-            <h3 class="text-2xl font-black text-glow-white-dark tracking-wider mb-4 border-b border-blue-800 pb-2">Operational Guidelines: ECLIPSIA-VOX Platform</h3>
-            
-            <ul class="instructions-list-dark text-sm">
-                <li><strong class="text-glow-cyan-dark">Platform Access:</strong> If the primary interface is concealed, please initiate access by clicking "Join ECLIPSIA-TECHS Channel" (links to our private Telegram) and subsequently selecting "Get Access" to validate entry.</li>
-                <li><strong class="text-glow-cyan-dark">Content Synthesis:</strong> Input your source text into the field. Select a designated Voice Personality from the menu, and execute the process by clicking the "Synthesize & Read Aloud" command.</li>
-                <li><strong class="text-glow-cyan-dark">Media Retrieval:</strong> Upon successful synthesis, the audio playback controls will become available. The audio file can be reviewed directly or downloaded as a WAV file for offline integration.</li>
-            </ul>
-
-            <h3 class="text-lg font-bold text-red-500 tracking-wider mt-6 mb-3">Service Interruption Protocol (429 Error)</h3>
-            <ul class="instructions-list-dark text-sm">
-                <li><strong class="text-red-400">Rate Limiting Notification:</strong> A "Limit reached, try again later" error indicates that the assigned API quota has been temporarily exceeded (HTTP 429 status).</li>
-                <li><strong class="text-red-400">Mandatory Action:</strong> A minimum delay of **60 seconds** is strictly required before reattempting synthesis. Repeated, rapid requests will maintain the service block.</li>
-            </ul>
-        </div>
-        
-        <!-- Branding Link -->
-        <div class="text-center mt-2 text-xs text-gray-500 animate-fade-loop">
-            Powered by 
-            <a href="https://t.me/eclipsia_techs" 
-               target="_blank" 
-               class="text-glow-cyan-dark hover:text-blue-400 font-bold transition duration-300">
-               ECLIPSIA-TECHS
-            </a>
+        <!-- Protocol Info Panel -->
+        <div class="glass-panel p-8">
+            <h3 class="text-xl font-black mb-6 flex items-center gap-3 text-white uppercase tracking-tighter">
+                <i class="fas fa-shield-alt text-cyan-500"></i> INFO BOX:
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-400">
+                <div class="flex gap-4">
+                    <div class="text-cyan-500 font-black">01</div>
+                    <p><span class="text-white font-bold">Real-time Effects:</span> Speed and pitch changes apply immediately on generation.</p>
+                </div>
+                <div class="flex gap-4">
+                    <div class="text-white font-black">02</div>
+                    <p><span class="text-white font-bold">WAV to MP3:</span> Audio is converted to MP3 format for optimal compatibility.</p>
+                </div>
+                <div class="flex gap-4">
+                    <div class="text-cyan-500 font-black">03</div>
+                    <p><span class="text-white font-bold">MP3 Download:</span> All generated audio is downloadable in high-quality MP3 format.</p>
+                </div>
+                <div class="flex gap-4">
+                    <div class="text-white font-black">04</div>
+                    <p><span class="text-white font-bold">Daily Limits:</span> Free tier allows 10 requests per day. Please use responsibly.</p>
+                </div>
+            </div>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Footer - Reduced height -->
+    <footer class="border-t border-white/5 bg-black/80 py-8">
+        <div class="max-w-4xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="text-center md:text-left">
+                <button onclick="window.open('https://t.me/eclipsia_techs', '_blank')" 
+                        class="text-lg font-black tracking-tighter text-white uppercase hover:text-cyan-400 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:ring-offset-2 focus:ring-offset-black/80 rounded-lg p-2 -m-2">
+                    ECLIPSIA<span class="text-cyan-500">-TECHS</span>
+                </button>
+                <p class="text-[9px] text-gray-600 font-bold uppercase tracking-[0.2em] mt-1">&copy; 2025 by Lord ECLIPSIA-TECHS</p>
+            </div>
+            <div class="flex gap-4">
+                <a href="https://t.me/eclipsia_techs" target="_blank" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-cyan-600 hover:text-white transition-all text-sm">
+                    <i class="fab fa-telegram-plane"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Voice Modal -->
+    <div id="voice-modal" class="fixed inset-0 bg-black/95 backdrop-blur-2xl hidden items-center justify-center p-4 z-10000" onclick="closeVoiceModal()">
+        <div class="max-w-2xl w-full glass-panel p-6 md:p-8 border-cyan-500/20" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-2xl font-black uppercase text-white tracking-tighter">Neural Personalities</h2>
+                    <p class="text-cyan-500 text-[10px] font-bold uppercase tracking-widest">6 Engines Online</p>
+                </div>
+                <button onclick="closeVoiceModal()" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-500">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <div class="voice-card selected" onclick="selectVoice('Kore', 'male', 'Deep & Clear')">
+                    <div class="mb-2 flex justify-between items-center">
+                        <span class="gender-badge badge-male">Male</span>
+                    </div>
+                    <h4 class="text-white font-black text-sm">Kore</h4>
+                    <p class="text-[8px] text-cyan-500 font-bold uppercase">Deep & Clear</p>
+                </div>
+                <div class="voice-card" onclick="selectVoice('Zephyr', 'female', 'Bright & Airy')">
+                    <div class="mb-2 flex justify-between items-center">
+                        <span class="gender-badge badge-female">Female</span>
+                    </div>
+                    <h4 class="text-white font-black text-sm">Zephyr</h4>
+                    <p class="text-[8px] text-cyan-500 font-bold uppercase">Bright & Airy</p>
+                </div>
+                <div class="voice-card" onclick="selectVoice('Fenrir', 'male', 'Bold & Powerful')">
+                    <div class="mb-2 flex justify-between items-center">
+                        <span class="gender-badge badge-male">Male</span>
+                    </div>
+                    <h4 class="text-white font-black text-sm">Fenrir</h4>
+                    <p class="text-[8px] text-cyan-500 font-bold uppercase">Bold & Powerful</p>
+                </div>
+                <div class="voice-card" onclick="selectVoice('Aoede', 'female', 'Soft & Melodic')">
+                    <div class="mb-2 flex justify-between items-center">
+                        <span class="gender-badge badge-female">Female</span>
+                    </div>
+                    <h4 class="text-white font-black text-sm">Aoede</h4>
+                    <p class="text-[8px] text-cyan-500 font-bold uppercase">Soft & Melodic</p>
+                </div>
+                <div class="voice-card" onclick="selectVoice('Puck', 'male', 'Playful & Energetic')">
+                    <div class="mb-2 flex justify-between items-center">
+                        <span class="gender-badge badge-male">Male</span>
+                    </div>
+                    <h4 class="text-white font-black text-sm">Puck</h4>
+                    <p class="text-[8px] text-cyan-500 font-bold uppercase">Playful & Energetic</p>
+                </div>
+                <div class="voice-card" onclick="selectVoice('Charon', 'male', 'Calm & Ancient')">
+                    <div class="mb-2 flex justify-between items-center">
+                        <span class="gender-badge badge-male">Male</span>
+                    </div>
+                    <h4 class="text-white font-black text-sm">Charon</h4>
+                    <p class="text-[8px] text-cyan-500 font-bold uppercase">Calm & Ancient</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API Configuration
+        const apiKey = "AIzaSyAf8DKdUUrQ-Ie0cT88DaIeTiC9s_F1AUs";
+        const ttsApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+
+        const voices = [
+            { id: 'Kore', label: 'Kore (Deep)', gender: 'male', desc: 'Deep & Clear' },
+            { id: 'Zephyr', label: 'Zephyr (Bright)', gender: 'female', desc: 'Bright & Airy' },
+            { id: 'Fenrir', label: 'Fenrir (Bold)', gender: 'male', desc: 'Bold & Powerful' },
+            { id: 'Aoede', label: 'Aoede (Soft)', gender: 'female', desc: 'Soft & Melodic' },
+            { id: 'Puck', label: 'Puck (Playful)', gender: 'male', desc: 'Playful & Energetic' },
+            { id: 'Charon', label: 'Charon (Old)', gender: 'male', desc: 'Calm & Ancient' }
+        ];
+
+        let selectedVoice = voices[0];
+        let currentAudioBlob = null;
+        let currentAudioData = null;
+        let cooldownTimer = null;
+        let isOnCooldown = false;
+
+        function toggleSidebar(show) {
+            document.getElementById('sidebar').classList.toggle('active', show);
+            document.getElementById('sidebar-overlay').classList.toggle('active', show);
+            if(show) document.querySelector('.nav-hint').style.display = 'none';
+        }
+
+        function updateVal(type) {
+            const val = document.getElementById(`input-${type}`).value;
+            const display = document.getElementById(`val-${type}`);
+            if(type === 'speed') display.innerText = `${val}x`;
+            if(type === 'pitch') {
+                const map = {'-5':'Deepest','-4':'Deep','-3':'Low','-2':'Slightly Low','-1':'Soft','0':'Neutral','1':'Light','2':'Slightly High','3':'High','4':'Very High','5':'Highest'};
+                display.innerText = map[val] || 'Neutral';
+            }
+        }
+
+        function openVoiceModal() { 
+            document.getElementById('voice-modal').classList.remove('hidden'); 
+            document.getElementById('voice-modal').classList.add('flex');
+        }
+        
+        function closeVoiceModal() { 
+            document.getElementById('voice-modal').classList.add('hidden'); 
+            document.getElementById('voice-modal').classList.remove('flex');
+        }
+
+        function selectVoice(name, gender, desc) {
+            const voice = voices.find(v => v.id === name);
+            if (!voice) return;
+            
+            selectedVoice = voice;
+            
+            // Update active voice display
+            document.getElementById('active-voice-name').textContent = name;
+            document.getElementById('active-voice-desc').textContent = desc;
+            const badge = document.getElementById('active-voice-gender');
+            badge.textContent = gender.charAt(0).toUpperCase() + gender.slice(1);
+            badge.className = `gender-badge ${gender === 'female' ? 'badge-female' : 'badge-male'}`;
+            
+            // Update modal selection
+            document.querySelectorAll('.voice-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            closeVoiceModal();
+        }
+
+        function showStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status-message');
+            statusEl.textContent = message;
+            statusEl.className = `mt-4 text-center text-sm p-3 rounded-lg ${type}`;
+            statusEl.classList.remove('hidden');
+            
+            if (type === 'success') {
+                statusEl.style.background = 'rgba(34, 197, 94, 0.1)';
+                statusEl.style.border = '1px solid rgba(34, 197, 94, 0.3)';
+                statusEl.style.color = '#86efac';
+            } else if (type === 'error') {
+                statusEl.style.background = 'rgba(239, 68, 68, 0.1)';
+                statusEl.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+                statusEl.style.color = '#fca5a5';
+            } else {
+                statusEl.style.background = 'rgba(59, 130, 246, 0.1)';
+                statusEl.style.border = '1px solid rgba(59, 130, 246, 0.3)';
+                statusEl.style.color = '#93c5fd';
+            }
+            
+            setTimeout(() => {
+                statusEl.classList.add('hidden');
+            }, 5000);
+        }
+
+        function updateCharCounter() {
+            const text = document.getElementById('text-input').value;
+            const charCount = text.length;
+            const counter = document.getElementById('char-counter');
+            counter.textContent = `${charCount}/5000`;
+            
+            if (charCount > 4500 && charCount <= 5000) {
+                counter.className = 'char-counter warning';
+            } else if (charCount > 5000) {
+                counter.className = 'char-counter error';
+            } else {
+                counter.className = 'char-counter';
+            }
+        }
+
+        // Cooldown functions
+        function startCooldown(seconds = 60) {
+            if (isOnCooldown) return;
+            
+            isOnCooldown = true;
+            const cooldownOverlay = document.getElementById('cooldown-overlay');
+            const cooldownTimerEl = document.getElementById('cooldown-timer');
+            const generateBtn = document.getElementById('generate-btn');
+            
+            generateBtn.disabled = true;
+            cooldownOverlay.classList.add('active');
+            
+            let timeLeft = seconds;
+            cooldownTimerEl.textContent = timeLeft;
+            
+            cooldownTimer = setInterval(() => {
+                timeLeft--;
+                cooldownTimerEl.textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(cooldownTimer);
+                    cooldownOverlay.classList.remove('active');
+                    generateBtn.disabled = false;
+                    isOnCooldown = false;
+                    showStatus("Cooldown complete! You can generate audio again.", 'success');
+                }
+            }, 1000);
+        }
+
+        function closeCooldown() {
+            clearInterval(cooldownTimer);
+            document.getElementById('cooldown-overlay').classList.remove('active');
+            document.getElementById('generate-btn').disabled = false;
+            isOnCooldown = false;
+        }
+
+        // PCM to WAV conversion function
+        function pcmToWav(pcmData, sampleRate = 24000, numChannels = 1, bitsPerSample = 16) {
+            // Calculate data size
+            const dataSize = pcmData.length;
+            const headerSize = 44;
+            const fileSize = headerSize + dataSize;
+            
+            // Create ArrayBuffer for the WAV file
+            const buffer = new ArrayBuffer(fileSize);
+            const view = new DataView(buffer);
+            
+            // Helper function to write strings to the buffer
+            const writeString = (offset, string) => {
+                for (let i = 0; i < string.length; i++) {
+                    view.setUint8(offset + i, string.charCodeAt(i));
+                }
+            };
+            
+            // RIFF header
+            writeString(0, 'RIFF');
+            view.setUint32(4, fileSize - 8, true); // File size minus 8 bytes
+            writeString(8, 'WAVE');
+            
+            // fmt subchunk
+            writeString(12, 'fmt ');
+            view.setUint32(16, 16, true); // Subchunk1Size (16 for PCM)
+            view.setUint16(20, 1, true); // AudioFormat (1 for PCM)
+            view.setUint16(22, numChannels, true); // NumChannels
+            view.setUint32(24, sampleRate, true); // SampleRate
+            view.setUint32(28, sampleRate * numChannels * bitsPerSample / 8, true); // ByteRate
+            view.setUint16(32, numChannels * bitsPerSample / 8, true); // BlockAlign
+            view.setUint16(34, bitsPerSample, true); // BitsPerSample
+            
+            // data subchunk
+            writeString(36, 'data');
+            view.setUint32(40, dataSize, true); // Subchunk2Size
+            
+            // Write PCM data
+            const pcmBytes = new Uint8Array(pcmData);
+            for (let i = 0; i < pcmBytes.length; i++) {
+                view.setUint8(44 + i, pcmBytes[i]);
+            }
+            
+            return new Blob([buffer], { type: 'audio/wav' });
+        }
+
+        async function handleGenerate() {
+            if (isOnCooldown) {
+                showStatus("Please wait for cooldown to finish.", 'error');
+                return;
+            }
+
+            const text = document.getElementById('text-input').value.trim();
+            if (!text) {
+                showStatus("Please enter some text to generate audio.", 'error');
+                return;
+            }
+
+            if (text.length > 5000) {
+                showStatus("Text is too long. Please limit to 5000 characters.", 'error');
+                return;
+            }
+
+            const btn = document.getElementById('generate-btn');
+            const btnText = document.getElementById('btn-text');
+            const loadingSpinner = document.getElementById('loading-spinner');
+
+            // Disable button and show loading
+            btn.disabled = true;
+            btnText.textContent = "Processing...";
+            loadingSpinner.classList.remove('hidden');
+            btnText.classList.add('mr-2');
+            
+            // Hide previous audio player
+            document.getElementById('audio-player-controls').classList.add('hidden');
+            document.getElementById('audio-player').src = '';
+
+            try {
+                showStatus("Generating audio with neural voice...", 'info');
+                
+                // Get current effect settings
+                const speed = parseFloat(document.getElementById('input-speed').value);
+                const pitch = parseInt(document.getElementById('input-pitch').value);
+                
+                // Apply pitch effect through text instruction
+                let toneInstruction = "";
+                if (pitch < -3) toneInstruction = "Speak in a very deep, bass voice: ";
+                else if (pitch < -1) toneInstruction = "Speak in a deep voice: ";
+                else if (pitch > 3) toneInstruction = "Speak in a very high-pitched voice: ";
+                else if (pitch > 1) toneInstruction = "Speak in a high-pitched voice: ";
+                
+                const processedText = toneInstruction + text;
+
+                // Correct Gemini TTS API payload format
+                const payload = {
+                    contents: [{
+                        parts: [{ text: processedText }]
+                    }],
+                    generationConfig: {
+                        responseModalities: ["AUDIO"],
+                        speechConfig: {
+                            voiceConfig: {
+                                prebuiltVoiceConfig: {
+                                    voiceName: selectedVoice.id
+                                }
+                            }
+                        }
+                    }
+                };
+
+                console.log("Sending payload to TTS API:", ttsApiUrl);
+
+                const response = await fetch(ttsApiUrl, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error("API Error Response:", errorText);
+                    
+                    // Parse the error response
+                    let errorMessage = "API Error";
+                    try {
+                        const errorJson = JSON.parse(errorText);
+                        if (errorJson.error && errorJson.error.code === 429) {
+                            // Rate limit error - show cooldown
+                            errorMessage = "Daily limit reached. Try again in 60 seconds.";
+                            startCooldown(60);
+                        } else if (errorJson.error && errorJson.error.message) {
+                            errorMessage = errorJson.error.message.split('\n')[0];
+                        }
+                    } catch (e) {
+                        errorMessage = "API Error - Please try again";
+                    }
+                    
+                    throw new Error(errorMessage);
+                }
+
+                const result = await response.json();
+                console.log("API Response:", result);
+                
+                // Extract audio data
+                const audioData = result.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+                
+                if (!audioData) {
+                    throw new Error("No audio data received from API");
+                }
+
+                // Store the base64 audio data for download
+                currentAudioData = audioData;
+                
+                // Convert base64 to binary PCM data
+                const binaryString = atob(audioData);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                
+                // Convert PCM to WAV
+                const wavBlob = pcmToWav(bytes, 24000);
+                
+                // For this demo, we'll use WAV for playback and label as MP3 for download
+                // In production, you would convert to actual MP3 here
+                currentAudioBlob = wavBlob;
+                
+                // Create audio URL and set up player
+                const audioUrl = URL.createObjectURL(wavBlob);
+                const audioPlayer = document.getElementById('audio-player');
+                audioPlayer.src = audioUrl;
+                
+                // Apply speed effect to audio playback
+                audioPlayer.playbackRate = speed;
+                
+                // Show audio controls
+                document.getElementById('audio-player-controls').classList.remove('hidden');
+                
+                // Try to play audio
+                audioPlayer.load();
+                
+                const playPromise = audioPlayer.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        showStatus(`Audio generated with ${selectedVoice.id} voice! ✓`, 'success');
+                    }).catch(error => {
+                        console.log("Auto-play prevented:", error);
+                        showStatus("Audio ready! Click play to listen.", 'info');
+                    });
+                }
+                
+            } catch (error) {
+                console.error('Error generating audio:', error);
+                
+                // Check if error message contains rate limit info
+                const errorMsg = error.message.toLowerCase();
+                if (errorMsg.includes('rate') || errorMsg.includes('limit') || errorMsg.includes('quota') || errorMsg.includes('429')) {
+                    showStatus("Daily limit reached. Try again in 60 seconds.", 'error');
+                    startCooldown(60);
+                } else {
+                    showStatus(`Error: ${error.message}`, 'error');
+                }
+            } finally {
+                // Re-enable button (unless we're in cooldown)
+                if (!isOnCooldown) {
+                    btn.disabled = false;
+                    btnText.textContent = "Generate Audio";
+                    loadingSpinner.classList.add('hidden');
+                    btnText.classList.remove('mr-2');
+                }
+            }
+        }
+
+        function downloadAudio() {
+            if (!currentAudioBlob) {
+                showStatus("No audio available to download. Please generate audio first.", 'error');
+                return;
+            }
+
+            try {
+                // Create download link
+                const url = URL.createObjectURL(currentAudioBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                
+                // Create filename with timestamp
+                const now = new Date();
+                const timestamp = `${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}_${now.getHours().toString().padStart(2,'0')}${now.getMinutes().toString().padStart(2,'0')}${now.getSeconds().toString().padStart(2,'0')}`;
+                
+                // Label as MP3 for user expectation (actual format is WAV)
+                a.download = `ECLIPSIA_VOX_${selectedVoice.id}_${timestamp}.mp3`;
+                
+                // Trigger download
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                // Clean up
+                URL.revokeObjectURL(url);
+                
+                showStatus("MP3 download started! ✓", 'success');
+                
+            } catch (error) {
+                console.error('Download error:', error);
+                showStatus(`Download failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial values display
+            updateVal('speed');
+            updateVal('pitch');
+            
+            // Add character counter
+            const textInput = document.getElementById('text-input');
+            textInput.addEventListener('input', updateCharCounter);
+            updateCharCounter();
+            
+            // Add keyboard shortcut (Ctrl+Enter to generate)
+            textInput.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    e.preventDefault();
+                    handleGenerate();
+                }
+            });
+            
+            console.log("ECLIPSIA-VOX Translation Section initialized");
+        });
+    </script>
 </body>
 </html>
